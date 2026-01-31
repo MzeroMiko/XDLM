@@ -67,12 +67,6 @@ class TrainerBase(L.LightningModule):
         self.parameterization = self.config.algo.parameterization
         if self.config.algo.backbone == "dit":
             self.backbone = models.dit.DIT(self.config, vocab_size=self.vocab_size)
-        elif self.config.algo.backbone == "dimamba":
-            self.backbone = models.dimamba.DiMamba(
-                self.config,
-                vocab_size=self.vocab_size,
-                pad_token_id=self.tokenizer.pad_token_id,
-            )
         elif self.config.algo.backbone == "hf_dit":
             self.backbone = transformers.AutoModelForMaskedLM.from_pretrained(
                 config.eval.checkpoint_path, trust_remote_code=True
