@@ -1,0 +1,10 @@
+train: imagenet
+valid: imagenet
+length: 256 # (256/16*256/16=256)
+streaming: False
+add_special_tokens: True
+add_mask_token: True
+tokenizer_name_or_path: imagenet_16384
+tokenizer_checkpoint: .cache/others/LLamaGen/vq_ds16_c2i.pt
+class_dropout_prob: 0.1
+num_classes: 1000
