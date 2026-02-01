@@ -9,12 +9,22 @@ def _load_from_checkpoint(diffusion_model, config, tokenizer):
     if "hf" in config.algo.backbone:
         return diffusion_model(config, tokenizer=tokenizer).to("cuda")
 
-    return diffusion_model.load_from_checkpoint(
-        config.eval.checkpoint_path,
-        tokenizer=tokenizer,
-        config=config,
-        strict=False,
-    )
+    try:
+        return diffusion_model.load_from_checkpoint(
+            config.eval.checkpoint_path, tokenizer=tokenizer, config=config
+        )
+    except Exception as e:
+        model = diffusion_model(config, tokenizer=tokenizer).to("cuda")
+        state_dict = torch.load(config.eval.checkpoint_path, map_location="cpu")
+        if "ema" in  state_dict:
+            state_dict = state_dict["ema"]
+            assert config.training.ema > 0
+            model.ema.load_state_dict(state_dict)
+            model.ema.copy_to(model.parameters())
+        else:
+            import traceback
+            traceback.print_exc()
+        return model
 
 
 def _generate_samples(diffusion_model, config, logger, tokenizer):

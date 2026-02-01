@@ -19,8 +19,8 @@ omegaconf.OmegaConf.register_new_resolver("div_up", lambda x, y: (x + y - 1) // 
 
 DiffusionModels = dict(
     xdlm=algo.XDLM,
-    udlmt=algo.UDLM,
-    mdlmt=algo.MDLM,
+    udlm=algo.UDLM,
+    mdlm=algo.MDLM,
     gidd=algo.GIDD,
 )
 
@@ -29,9 +29,22 @@ def _load_from_checkpoint(diffusion_model, config, tokenizer):
     if "hf" in config.algo.backbone:
         return diffusion_model(config, tokenizer=tokenizer).to("cuda")
 
-    return diffusion_model.load_from_checkpoint(
-        config.eval.checkpoint_path, tokenizer=tokenizer, config=config
-    )
+    try:
+        return diffusion_model.load_from_checkpoint(
+            config.eval.checkpoint_path, tokenizer=tokenizer, config=config
+        )
+    except Exception as e:
+        model = diffusion_model(config, tokenizer=tokenizer)
+        state_dict = torch.load(config.eval.checkpoint_path, map_location="cpu")
+        if "ema" in  state_dict:
+            state_dict = state_dict["ema"]
+            assert config.training.ema > 0
+            model.ema.load_state_dict(state_dict)
+            model.ema.copy_to(model.parameters())
+        else:
+            import traceback
+            traceback.print_exc()
+        return model
 
 
 @L.pytorch.utilities.rank_zero_only
@@ -144,9 +157,21 @@ def _train(diffusion_model, config, logger, tokenizer):
 
     if config.training.finetune_path != "":
         assert utils.fsspec_exists(config.training.finetune_path)
-        model = diffusion_model.load_from_checkpoint(
-            config.training.finetune_path, tokenizer=tokenizer, config=config
-        )
+        try:
+            model = diffusion_model.load_from_checkpoint(
+                config.training.finetune_path, tokenizer=tokenizer, config=config
+            )
+        except Exception as e:
+            model = diffusion_model(config, tokenizer=valid_ds.tokenizer)
+            state_dict = torch.load(config.training.finetune_path, map_location="cpu")
+            if "ema" in  state_dict:
+                state_dict = state_dict["ema"]
+                assert config.training.ema > 0
+                model.ema.load_state_dict(state_dict)
+                model.ema.copy_to(model.parameters())
+            else:
+                import traceback
+                traceback.print_exc()
     else:
         model = diffusion_model(config, tokenizer=valid_ds.tokenizer)
     logger.info(f"{model}")

@@ -17,8 +17,8 @@ omegaconf.OmegaConf.register_new_resolver("div_up", lambda x, y: (x + y - 1) // 
 
 DiffusionModels = dict(
     xdlm=algo.XDLM,
-    udlmt=algo.UDLM,
-    mdlmt=algo.MDLM,
+    udlm=algo.UDLM,
+    mdlm=algo.MDLM,
     gidd=algo.GIDD,
 )
 

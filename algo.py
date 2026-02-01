@@ -63,7 +63,7 @@ class BaseDiffusionWithCond(trainer_base.Diffusion):
 
         self.cfg_gamma = self.config.sampling.guidance_gamma
         self.with_inner_cfg = False
-        if self.with_cond and self.cfg_gamma > 0.0 and self.config.training.guidance_inner:
+        if self.with_cond and self.cfg_gamma > 0.0:
             self.with_inner_cfg = True
 
         self.p_nucleus_afterwards = False
@@ -720,7 +720,6 @@ class UDLM(BaseDiffusionWithCond):
         super().__init__(config, tokenizer)
         self._validate_configuration()
         BaseDiffusionWithCond.__init_cfg__(self)
-        self.nll_type = self.config.algo.parameterization
         self.config.sampling.use_float64 = self.config.sampling.use_float64 and (
             not self.sample_force_float64
         )
@@ -889,16 +888,11 @@ class XDLM(BaseDiffusionWithCond):
         self._validate_configuration()
         self.__init_cfg__()
 
-        # self.nll_type = self.parameterization
-        self.k1 = config.algo.k1
-        self.sample_start_k1_zero = config.algo.sample_start_k1_zero
-        self.forward_pure_logits = True
-        self.gradient_align_version = self.config.algo.gradient_align_version
+        self.k1 = getattr(config.algo, "k1", 0.1)
+        self.sample_start_k1_zero = getattr(config.algo, "sample_start_k1_zero", False)
 
     def _process_model_output(self, model_output, xt, sigma):
-        if self.forward_pure_logits:
-            return model_output
-        raise NotImplementedError
+        return model_output
 
     def q_xt(self, x, alpha_t):
         """Computes the noisy sample xt.
