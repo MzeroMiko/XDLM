@@ -1,0 +1,127 @@
+defaults:
+  - _self_
+  - /callbacks: [checkpoint_every_n_steps, checkpoint_monitor, learning_rate_monitor]
+  - /data: openwebtext
+  - /model: small
+  - /lr_scheduler: constant_warmup
+  - /algo: xdlm
+
+mode: train  # train / ppl_eval / sample_eval
+
+is_vision: False
+seed: 1
+
+strategy:
+  _target_: lightning.pytorch.strategies.DDPStrategy
+  find_unused_parameters: False
+
+prior:
+  type: none
+  latent_width: 0
+  latent_height: 0
+
+noise:
+  type: log-linear
+  parameterization: log-linear
+  eps: 0
+  denoiser_latent_conditioning: -1
+  freeze_encoder: False
+  freeze_decoder: False
+
+loader:
+  global_batch_size: 512
+  eval_global_batch_size: ${.global_batch_size}
+  # Note: batch_size and eval_batch_size are **per machine**
+  batch_size: 16
+  eval_batch_size: 16
+  num_workers: ${eval:"len(__import__('os').sched_getaffinity(0))"}
+  pin_memory: True
+
+sampling:
+  predictor: ancestral  # ancestral_cache (only for MDLM), ancestral, analytic
+  steps: 1000
+  noise_removal: ancestral  # 'ancestral', 'greedy', 'none'
+  use_float64: True
+  p_nucleus: 1.0
+  num_sample_batches: 2  # Total samples: `num_gpus` * `loader.eval_batch_size` * num_sample_batches
+  num_sample_log: 2
+  guidance_gamma: -1.0
+  vision_show_stride: -1
+  vision_target_class: -1
+
+  # for remdm
+  mdlm_sampler: 
+    sampler: none
+    auto: True
+    eta: 0.02 
+    t_on: 0.55 
+    t_off: 0.05 
+    alpha_on: 0.9
+
+training:
+  ema: 0.9999
+  antithetic_sampling: True
+  importance_sampling: False
+  sampling_eps: 1e-3
+  change_of_variables: False
+  loss_precision: 'bf16'  # bf16, float32, float64
+  finetune_path: ''
+  guidance: False
+
+eval:
+  checkpoint_path: ''  # Used to evaluate a checkpoint after training.
+  disable_ema: False
+  compute_generative_perplexity: False
+  perplexity_batch_size: 8
+  compute_perplexity_on_sanity: False
+  gen_ppl_eval_model_name_or_path: gpt2-large  # gpt2-large, meta-llama/Llama-2-7b-hf
+  generate_samples: False
+  generated_samples_path: ${cwd:}/samples.json
+
+optim:
+  weight_decay: 0
+  lr: 3e-4
+  beta1: 0.9
+  beta2: 0.999
+  eps: 1e-8
+
+trainer:
+  _target_: lightning.Trainer
+  accelerator: cuda
+  num_nodes: 1
+  devices: ${device_count:}
+  accumulate_grad_batches: ${div_up:${loader.global_batch_size}, ${eval:${trainer.devices} * ${loader.batch_size} * ${trainer.num_nodes}}}
+  gradient_clip_val: 1.0
+  precision: 'bf16'
+  num_sanity_val_steps: 2
+  max_steps: 1_000_000
+  log_every_n_steps: 100
+  limit_train_batches: 1.0   # train on full dataset, can be used to toggle quick run
+  limit_val_batches: 1.0     # validate on full dataset, can be used to toggle quick run
+  val_check_interval: 10000
+
+wandb:
+  project: discrete-diffusion-model
+  notes: discrete-diffusion-model
+  group: null
+  job_type: null
+  name: null
+  id: ${.name}_${seed}
+  tags:
+    - ${noise.type}
+    - ${data.train}
+    - ${data.valid}
+    - ${algo.name}
+
+hydra:
+  run:
+    dir: ./outputs/${data.train}/${now:%Y.%m.%d}/${now:%H%M%S}
+  job:
+    chdir: true
+
+checkpointing:
+  # Use custom `save_dir` if, e.g., saving to S3 bucket, otherwise leave this parameter as is
+  save_dir: ${cwd:}
+  # Note: `checkpoints` path should correspond to `checkpoint_every_n_steps.dirpath`
+  resume_from_ckpt: true
+  resume_ckpt_path: ${.save_dir}/checkpoints/last.ckpt
