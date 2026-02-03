@@ -1,9 +1,9 @@
 <div align=center>
   
-# miXed Diffusion Language Modeling
+# [miXed Diffusion Language Modeling](https://arxiv.org/pdf/2602.01362)
 </div>
 
-This is the official implementaion of paper [***Balancing Understanding and Generation in Discrete Diffusion Models***](coming-soon). This repository contains Pytorch training and evaluation code.
+This is the official implementaion of paper [***Balancing Understanding and Generation in Discrete Diffusion Models***](https://arxiv.org/pdf/2602.01362). This repository contains Pytorch training and evaluation code.
 
 <div align=center>
 <img src="docs/xdlm_intro.png" width="80%">
@@ -40,7 +40,7 @@ operation where previously generated tokens are rejected and reverted to `[MASK]
 <img src="docs/xdlm_lm1b_case.png" width="80%">
 </div>
 
-### LLaDA Continue Pretraining
+### [LLaDA Continue Pretraining](https://github.com/MzeroMiko/LLaDA-XDLM)
 
 ***LLaDA-XDLM with sampling budget of 32.***
 Evaluation of adapting LLaDA-8B to our XDLM for-
