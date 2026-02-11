@@ -72,6 +72,13 @@ we sincerely thank them for their contributions to the community.
 
 ## Citation
 
-coming soon
+```
+@article{liu2026balancing,
+  title={Balancing Understanding and Generation in Discrete Diffusion Models},
+  author={Liu, Yue and Zhao, Yuzhong and Xie, Zheyong and Ye, Qixiang and Jiao, Jianbin and Hu, Yao and Cao, Shaosheng and Liu, Yunfan},
+  journal={arXiv preprint arXiv:2602.01362},
+  year={2026}
+}
+```
 
 
