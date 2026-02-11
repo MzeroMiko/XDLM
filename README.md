@@ -2,6 +2,16 @@
   
 # [miXed Diffusion Language Modeling](https://arxiv.org/pdf/2602.01362)
 </div>
+<h4 align="center">
+  
+[![arxiv](https://img.shields.io/badge/XDLM-arxiv-red?logo=arxiv)](https://arxiv.org/abs/2602.01362)
+[![huggingface](https://img.shields.io/badge/XDLM-huggingface-red?logo=huggingface)](https://huggingface.co/papers/2602.01362)
+[![repo](https://img.shields.io/badge/XDLM-repo-blue?logo=github)](https://github.com/MzeroMiko/XDLM)
+[![repo](https://img.shields.io/badge/LLaDA_XDLM-repo-blue?logo=github)](https://github.com/MzeroMiko/LLaDA-XDLM)
+[![models](https://img.shields.io/badge/XDLM-models-yellow?logo=huggingface)](https://huggingface.co/Mzero17/XDLM)
+[![models](https://img.shields.io/badge/LLaDA_XDLM-models-yellow?logo=huggingface)](https://huggingface.co/Mzero17/LLaDA-XDLM)
+
+</h4>
 
 This is the official implementaion of paper [***Balancing Understanding and Generation in Discrete Diffusion Models***](https://arxiv.org/pdf/2602.01362). This repository contains Pytorch training and evaluation code.
 
