@@ -50,7 +50,7 @@ operation where previously generated tokens are rejected and reverted to `[MASK]
 <img src="docs/xdlm_lm1b_case.png" width="80%">
 </div>
 
-### [LLaDA Continue Pretraining](https://github.com/MzeroMiko/LLaDA-XDLM)
+### [LLaDA Continual Pretraining](https://github.com/MzeroMiko/LLaDA-XDLM)
 
 ***LLaDA-XDLM with sampling budget of 32.***
 Evaluation of adapting LLaDA-8B to our XDLM for-
@@ -82,7 +82,7 @@ we sincerely thank them for their contributions to the community.
 
 ## Citation
 
-```
+```bibtex
 @article{liu2026balancing,
   title={Balancing Understanding and Generation in Discrete Diffusion Models},
   author={Liu, Yue and Zhao, Yuzhong and Xie, Zheyong and Ye, Qixiang and Jiao, Jianbin and Hu, Yao and Cao, Shaosheng and Liu, Yunfan},
