@@ -6,6 +6,7 @@
   
 [![arxiv](https://img.shields.io/badge/XDLM-arxiv-red?logo=arxiv)](https://arxiv.org/abs/2602.01362)
 [![huggingface](https://img.shields.io/badge/XDLM-huggingface-red?logo=huggingface)](https://huggingface.co/papers/2602.01362)
+[![page](https://img.shields.io/badge/XDLM-page-blue?logo=github)](https://mzeromiko.github.io/public/XDLM/)
 [![repo](https://img.shields.io/badge/XDLM-repo-blue?logo=github)](https://github.com/MzeroMiko/XDLM)
 [![repo](https://img.shields.io/badge/LLaDA_XDLM-repo-blue?logo=github)](https://github.com/MzeroMiko/LLaDA-XDLM)
 [![models](https://img.shields.io/badge/XDLM-models-yellow?logo=huggingface)](https://huggingface.co/Mzero17/XDLM)
